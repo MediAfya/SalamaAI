@@ -16,6 +16,8 @@ root.render(
       },
     }}
   >
-    <App />
+    <Router>
+      <App />
+    </Router>
   </PrivyProvider>,
 );
