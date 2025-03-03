@@ -1,15 +1,9 @@
 export default {
-    dialet: 'postgresql',
-    schema: './src/utils/schema.jsx',
-    out: './drizzle',
-
+    dialect: "postgresql", // Ensure this is defined!
+    schema: "./src/utils/schema.jsx",
+    out: "./drizzle",
     dbCredentials: {
+        connectionString: process.env.DATABASE_URL, 
         url: process.env.DATABASE_URL,
-        connectionString: process.env.DATABASE_URL,
-        // host: '',
-        // port: '',
-        // database: '',
-        // user: '',
-        // password: '',
     },
-}
+};
