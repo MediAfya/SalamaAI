@@ -8,6 +8,52 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
+const handleFileUpload = async () => {
+    if (!file) return;
+    setUploading(true);
+  
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    try {
+      const response = await openai.files.create({
+        purpose: "assistants",
+        file: formData.get("file"),
+      });
+  
+      const assistant = await openai.beta.assistants.create({
+        name: "AI Treatment Planner",
+        instructions: "Provide personalized treatment recommendations.",
+        model: "gpt-4o",
+        tools: [{ type: "file_search" }],
+      });
+  
+      const thread = await openai.beta.threads.create({
+        messages: [
+          {
+            role: "user",
+            content: "Generate a detailed, structured treatment plan.",
+            attachments: [{ file_id: response.id, tools: [{ type: "file_search" }] }],
+          },
+        ],
+      });
+  
+      const stream = openai.beta.threads.runs.stream(thread.id, {
+        assistant_id: assistant.id,
+      }).on("messageDone", async (event) => {
+        const resultText = event.content[0].text.value;
+        console.log(resultText);
+      });
+  
+      setUploadSuccess(true);
+    } catch (error) {
+      console.error("Upload failed", error);
+      setUploadSuccess(false);
+    } finally {
+      setUploading(false);
+    }
+  };  
+
 function SingleRecordDetails() {
   const { state } = useLocation();
   const navigate = useNavigate();
