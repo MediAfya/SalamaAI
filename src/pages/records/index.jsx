@@ -1,34 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { usePrivy } from "@privy-io/react-auth";
-import { getAllRecordData } from "../../actions";
+import { createRecord } from "../../actions";
 
-function Index() {
-  const navigate = useNavigate();
-  const { user } = usePrivy();
-  const [foldername, setFoldername] = useState("");
-  const [userRecords, setUserRecords] = useState([]);
-
-  useEffect(() => {
-    const cachedRecords = localStorage.getItem("userRecords");
-    if (cachedRecords) {
-      setUserRecords(JSON.parse(cachedRecords));
-    }
-
-    getAllRecordData()
-      .then(({ documents }) => {
+const createFolder = () => {
+  createRecord({
+    user_id: user.id,
+    record_name: foldername,
+    analysis_result: "",
+    kanban_records: "",
+  })
+    .then(() => {
+      getAllRecordData().then(({ documents }) => {
         const filteredRecords = documents.filter(
           (record) => record.user_id === user.id
         );
         setUserRecords(filteredRecords);
         localStorage.setItem("userRecords", JSON.stringify(filteredRecords));
-      })
-      .catch((e) => {
-        console.log(e);
+        setFoldername("");
+        handleCloseModal();
       });
-  }, [user]);
-
-  return <div>Loading records...</div>;
-}
-
-export default Index;
+    })
+    .catch((e) => {
+      console.log(e);
+      setFoldername("");
+      handleCloseModal();
+    });
+};
