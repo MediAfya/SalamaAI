@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { IconFileUpload, IconX } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import OpenAI from "openai";
+import ReactMarkdown from "react-markdown";
 const apiKey = import.meta.env.VITE_API_KEY;
 const openai = new OpenAI({
   apiKey: apiKey,
@@ -91,6 +92,13 @@ function SingleRecordDetails() {
         </div>
       </div>
     </div>
+    <div>
+    {uploadSuccess && <p className="text-green-600">Upload successful!</p>}
+    <div className="analysis-container">
+      <h2>AI Analysis Result</h2>
+      {uploading ? <p>Processing...</p> : <ReactMarkdown>{analysisResult}</ReactMarkdown>}
+    </div>
+  </div>
   );
 }
 export default SingleRecordDetails;
