@@ -1,54 +1,49 @@
-import React, { useContext, createContext } from "react";
-import { ethers } from "ethers";
-// import { EditionMetadataWithOwnerOutputSchema } from "@thirdweb-dev/sdk";
+import React, { createContext, useContext, useState, useCallback } from "react";
+import { db } from "../utils/dbConfig"; // Adjust the path to your dbConfig
+import { Users, Records } from "../utils/schema"; // Adjust the path to your schema definitions
+import { eq } from "drizzle-orm";
 
+// Create a context
 const StateContext = createContext();
 
+// Provider component
 export const StateContextProvider = ({ children }) => {
-  // const { contract } = useContract(
-  //   "0xf59A1f8251864e1c5a6bD64020e3569be27e6AA9"
-  // );
-  // const { mutateAsync: createCampaign } = useContractWrite(
-  //   contract,
-  //   "createCampaign"
-  // );
+  const [users, setUsers] = useState([]);
+  const [records, setRecords] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // const address = '0x0';
-  // const connect = useMetamask();
+  // Function to fetch all users
+  const fetchUsers = useCallback(async () => {
+    try {
+      const result = await db.select().from(Users).execute();
+      setUsers(result);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  }, []);
 
-  // const publishCampaign = async (form) => {
-  //   try {
-  //     const data = await createCampaign({
-  //       args: [
-  //         address, // owner
-  //         form.title, // title
-  //         form.description, // description
-  //         form.target,
-  //         new Date(form.deadline).getTime(), // deadline,
-  //         form.image,
-  //       ],
-  //     });
+  // Function to fetch user details by email
+  const fetchUserByEmail = useCallback(async (email) => {
+    try {
+      const result = await db
+        .select()
+        .from(Users)
+        .where(eq(Users.createdBy, email))
+        .execute();
+      if (result.length > 0) {
+        setCurrentUser(result[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching user by email:", error);
+    }
+  }, []);
 
-  //     console.log("contract call success", data);
-  //   } catch (error) {
-  //     console.log("contract call failure", error);
-  //   }
-  // };
-
-  // const getCampaigns = async () => {
-  //   const campaigns = await contract.call("getCampaigns");
-
-  //   const parsedCampaings = campaigns.map((campaign, i) => ({
-  //     owner: campaign.owner,
-  //     title: campaign.title,
-  //     description: campaign.description,
-  //     target: ethers.utils.formatEther(campaign.target.toString()),
-  //     deadline: campaign.deadline.toNumber(),
-  //     amountCollected: ethers.utils.formatEther(
-  //       campaign.amountCollected.toString()
-  //     ),
-
-  return <StateContext.Provider>{children}</StateContext.Provider>;
+  return (
+    <StateContext.Provider value={{ users, records, fetchUsers, fetchUserByEmail, currentUser }}>
+      {children}
+    </StateContext.Provider>
+  );
 };
 
+// Custom hook to use the context
 export const useStateContext = () => useContext(StateContext);
