@@ -1,4 +1,3 @@
-// Onboarding.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../context";
@@ -13,6 +12,24 @@ const Onboarding = () => {
   const { user } = usePrivy();
 
   console.log(user);
+  const handleOnboarding = async (e) => {
+    e.preventDefault();
+    const userData = {
+      username,
+      age: parseInt(age, 10),
+      location,
+      folders: [],
+      treatmentCounts: 0,
+      folder: [],
+      createdBy: user.email.address,
+    };
+
+    console.log(userData);
+    const newUser = await createUser(userData);
+    if (newUser) {
+      navigate("/profile");
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#13131a]">
@@ -21,7 +38,7 @@ const Onboarding = () => {
         <h2 className="mb-6 text-center text-2xl font-bold text-white">
           Welcome! Let's get started
         </h2>
-        <form>
+        <form onSubmit={handleOnboarding}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -67,6 +84,12 @@ const Onboarding = () => {
               className="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
             />
           </div>
+          <button
+            type="submit"
+            className="mt-4 w-full rounded-lg bg-green-600 py-3 font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            Get Started
+          </button>
         </form>
       </div>
     </div>
