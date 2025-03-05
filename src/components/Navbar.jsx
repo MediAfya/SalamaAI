@@ -1,72 +1,92 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePrivy } from "@privy-io/react-auth";
+import { useStateContext } from "../context"; // Adjust the import path
 
-// import { useStateContext } from '../context';
-import { logo, menu, search, thirdweb } from "../assets";
+import { CustomButton } from ".";
+import { menu, search } from "../assets";
 import { navlinks } from "../constants";
-import CustomButton from "./CustomButton";
+import { IconHeartHandshake } from "@tabler/icons-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("dashboard");
   const [toggleDrawer, setToggleDrawer] = useState(false);
-  // const { connect, address } = useStateContext();
   const { ready, authenticated, login, user, logout } = usePrivy();
+  const { fetchUsers, users, fetchUserRecords } = useStateContext();
 
-  console.log(ready, authenticated, user);
-  const disableLogin = !ready || (ready && authenticated);
+  const fetchUserInfo = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      await fetchUsers();
+      const existingUser = users.find(
+        (u) => u.createdBy === user.email.address,
+      );
+      if (existingUser) {
+        await fetchUserRecords(user.email.address);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  }, [user, fetchUsers, users, fetchUserRecords]);
+
+  useEffect(() => {
+    if (authenticated && user) {
+      fetchUserInfo();
+    }
+  }, [authenticated, user, fetchUserInfo]);
+
+  const handleLoginLogout = useCallback(() => {
+    if (authenticated) {
+      logout();
+    } else {
+      login().then(() => {
+        if (user) {
+          fetchUserInfo();
+        }
+      });
+    }
+  }, [authenticated, login, logout, user, fetchUserInfo]);
+
   return (
-    <div className="flex md:flex-row flex-col-reverse justify-between mb-[35px] gap-6">
-      <div className="lg:flex-1 flex flex-row max-w-[458px] py-2 pl-4 pr-2 h-[52px] bg-[#1c1c24] rounded-[100px]">
+    <div className="mb-[35px] flex flex-col-reverse justify-between gap-6 md:flex-row">
+      <div className="flex h-[52px] max-w-[458px] flex-row rounded-[100px] bg-[#1c1c24] py-2 pl-4 pr-2 lg:flex-1">
         <input
           type="text"
-          placeholder="Search for campaigns"
-          className="flex w-full font-epilogue font-normal text-[14px] placeholder:text-[#4b5264] text-white bg-transparent outline-none"
+          placeholder="Search for records"
+          className="flex w-full bg-transparent font-epilogue text-[14px] font-normal text-white outline-none placeholder:text-[#4b5264]"
         />
-
-        <div className="w-[72px] h-full rounded-[20px] bg-[#4acd8d] flex justify-center items-center cursor-pointer">
+        <div className="flex h-full w-[72px] cursor-pointer items-center justify-center rounded-[20px] bg-[#4acd8d]">
           <img
             src={search}
             alt="search"
-            className="w-[15px] h-[15px] object-contain"
+            className="h-[15px] w-[15px] object-contain"
           />
         </div>
       </div>
 
-      <div className="sm:flex hidden flex-row justify-end gap-4">
+      <div className="hidden flex-row justify-end gap-2 sm:flex">
         <CustomButton
           btnType="button"
           title={authenticated ? "Log Out" : "Log In"}
           styles={authenticated ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
-          handleClick={() => {
-            if (authenticated) {
-              logout();
-            }
-            login();
-          }}
+          handleClick={handleLoginLogout}
         />
       </div>
 
-      {/* Small screen navigation */}
-      <div className="sm:hidden flex justify-between items-center relative">
-        <div className="w-[40px] h-[40px] rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer">
-          <img
-            src={logo}
-            alt="user"
-            className="w-[60%] h-[60%] object-contain"
-          />
+      <div className="relative flex items-center justify-between sm:hidden">
+        <div className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-[10px] bg-[#2c2f32]">
+          <IconHeartHandshake size={40} color="#1ec070" className="p-2" />
         </div>
-
         <img
           src={menu}
           alt="menu"
-          className="w-[34px] h-[34px] object-contain cursor-pointer"
+          className="h-[34px] w-[34px] cursor-pointer object-contain"
           onClick={() => setToggleDrawer((prev) => !prev)}
         />
-
         <div
-          className={`absolute top-[60px] right-0 left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 ${
+          className={`absolute left-0 right-0 top-[60px] z-10 bg-[#1c1c24] py-4 shadow-secondary ${
             !toggleDrawer ? "-translate-y-[100vh]" : "translate-y-0"
           } transition-all duration-700`}
         >
@@ -74,9 +94,7 @@ const Navbar = () => {
             {navlinks.map((link) => (
               <li
                 key={link.name}
-                className={`flex p-4 ${
-                  isActive === link.name && "bg-[#3a3a43]"
-                }`}
+                className={`flex p-4 ${isActive === link.name && "bg-[#3a3a43]"}`}
                 onClick={() => {
                   setIsActive(link.name);
                   setToggleDrawer(false);
@@ -86,12 +104,12 @@ const Navbar = () => {
                 <img
                   src={link.imgUrl}
                   alt={link.name}
-                  className={`w-[24px] h-[24px] object-contain ${
+                  className={`h-[24px] w-[24px] object-contain ${
                     isActive === link.name ? "grayscale-0" : "grayscale"
                   }`}
                 />
                 <p
-                  className={`ml-[20px] font-epilogue font-semibold text-[14px] ${
+                  className={`ml-[20px] font-epilogue text-[14px] font-semibold ${
                     isActive === link.name ? "text-[#1dc071]" : "text-[#808191]"
                   }`}
                 >
@@ -100,8 +118,7 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-
-          <div className="flex mx-4"></div>
+          <div className="mx-4 flex"></div>
         </div>
       </div>
     </div>
