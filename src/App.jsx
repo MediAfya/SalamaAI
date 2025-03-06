@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { Sidebar, Navbar } from "./components";
-import { Home, Profile, Onboarding } from "./pages";
+// import { Sidebar, Navbar } from "./components";
+import Navbar from './components/Navbar.jsx';
+import Sidebar from './components/Sidebar.jsx';
+import { Home, Profile } from "./pages";
+import Onboarding from './pages/Onboarding';
 import MedicalRecords from "./pages/records/index";
 import ScreeningSchedule from "./pages/ScreeningSchedule";
 import SingleRecordDetails from "./pages/records/single-record-details";

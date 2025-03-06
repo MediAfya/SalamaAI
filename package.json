@@ -20,6 +20,7 @@
     "@thirdweb-dev/react": "^3",
     "@thirdweb-dev/sdk": "^3",
     "appwrite": "14.0.1",
+    "crypto-browserify": "^3.12.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.32.1",
     "ethers": "^5.7.2",

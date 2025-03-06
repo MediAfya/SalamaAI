@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import ColumnContainer from "./ColumnContainer";
+import ColumnContainer from "./ColumnContainer.jsx";
 import {
   DndContext,
   DragOverlay,
