@@ -57,6 +57,11 @@ const FileUploadModal = ({
           className="mr-3 mt-3 h-7 w-5 animate-spin text-white"
         />
       )}
+
+      {uploadSuccess && (
+        <p className="mt-2 text-green-600">Upload successful!</p>
+      )}
+      <span className="text-md text-left text-white">{filename}</span>
     </Modal>
   );
 };
