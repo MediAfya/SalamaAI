@@ -10,8 +10,7 @@ export default defineConfig({
       crypto: path.resolve(__dirname, "node_modules/crypto-browserify"),
     },
   },
-  base: "/SalamaAI/",
-  //base: "./",
+  base: "./",
   define: {
     global: "window", // Polyfill global as window
   },
