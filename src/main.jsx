@@ -21,7 +21,7 @@ root.render(
       },
     }}
   >
-    <Router>
+    <Router basename="/SalamaAI">
       <StateContextProvider>
         <App />
       </StateContextProvider>
