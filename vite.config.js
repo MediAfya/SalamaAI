@@ -10,12 +10,18 @@ export default defineConfig({
       crypto: path.resolve(__dirname, "node_modules/crypto-browserify"),
     },
   },
-  base: "/SalamaAI/",
-  //base: "./",
+  base: "/SalamaAI/", // ✅ Ensures GitHub Pages loads files correctly
   define: {
-    global: "window", // Polyfill global as window
+    global: "window",
   },
   optimizeDeps: {
     include: ["crypto-browserify", "randombytes"],
+  },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    rollupOptions: {
+      input: "index.html", // ✅ Ensures Rollup knows the entry point
+    },
   },
 });
