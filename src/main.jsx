@@ -19,6 +19,7 @@ root.render(
       embeddedWallets: {
         createOnLogin: "users-without-wallets",
       },
+      redirectAfterLogin: window.location.origin,
     }}
   >
     <Router>
