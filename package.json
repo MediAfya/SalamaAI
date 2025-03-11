@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "yarn build && npx thirdweb@latest upload dist",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "db:push": "drizzle-kit push",
     "db:studio": "npx drizzle-kit studio"
   },
@@ -41,6 +42,7 @@
     "@vitejs/plugin-react": "^2",
     "autoprefixer": "^10.4.13",
     "drizzle-kit": "^0.23.0",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.4.19",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
