@@ -4,16 +4,16 @@ import { IconFolderOpen } from "@tabler/icons-react";
 
 const RecordDetailsHeader = ({ recordName }) => {
   const [userRecords, setUserRecords] = useState([]);
-  const [successMessage, setSuccessMessage] = useState(null); // Success message for record creation
+  const [successMessage, setSuccessMessage] = useState(null);
 
-  // Fetch records from the API
+  // Fetch user records
   const fetchUserRecords = async () => {
     const response = await fetch("/api/records");
     const records = await response.json();
     setUserRecords(records);
   };
 
-  // Handle creating a new record
+  // Create a new record
   const handleCreateRecord = async () => {
     const response = await fetch("/api/records", {
       method: "POST",
@@ -21,11 +21,11 @@ const RecordDetailsHeader = ({ recordName }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        recordName: recordName, // Use the record name from props
-        userId: 1, // Use the logged-in user's ID (adjust as needed)
+        recordName, // Use the record name passed as prop
+        userId: 1, // Adjust to the logged-in user's ID
         analysisResult: "Pending", // Example value
         kanbanRecords: "In Progress", // Example value
-        createdBy: "system", // Adjust as needed
+        createdBy: "system", // Example value
       }),
     });
 
@@ -40,7 +40,7 @@ const RecordDetailsHeader = ({ recordName }) => {
   };
 
   useEffect(() => {
-    fetchUserRecords(); // Fetch records on initial load
+    fetchUserRecords(); // Fetch records on component mount
   }, []);
 
   return (
@@ -55,16 +55,16 @@ const RecordDetailsHeader = ({ recordName }) => {
           <a
             className="inline-flex items-center justify-between rounded-b-xl border-t border-gray-200 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 md:px-5 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800"
             href="#"
-            onClick={handleCreateRecord} // Call to create a new record
+            onClick={handleCreateRecord} // Trigger record creation
           >
             {recordName}
           </a>
         </div>
       </div>
-
-      {successMessage && <div className="mt-2 text-green-500">{successMessage}</div>} {/* Display success message */}
-
-      {/* Display the list of created records */}
+      {successMessage && (
+        <div className="mt-2 text-green-500">{successMessage}</div>
+      )}{" "}
+      {/* Display success message */}
       <div className="mt-6">
         <h2 className="text-lg font-semibold">Created Records:</h2>
         <ul>
