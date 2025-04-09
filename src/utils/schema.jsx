@@ -1,7 +1,8 @@
+// src/utils/schema.jsx
 import { sql } from "drizzle-orm";
 import { integer, varchar, pgTable, serial, text } from "drizzle-orm/pg-core";
 
-// users schema
+// Users schema
 export const Users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username").notNull(),
@@ -19,7 +20,7 @@ export const Users = pgTable("users", {
   createdBy: varchar("created_by").notNull(),
 });
 
-// records schema
+// Records schema
 export const Records = pgTable("records", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
