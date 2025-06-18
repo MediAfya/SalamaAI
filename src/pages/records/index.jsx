@@ -50,6 +50,8 @@ const Index = () => {
           createdBy: user.email.address,
         });
 
+
+        
         if (newRecord) {
           fetchUserRecords(user.email.address);
           handleCloseModal();
